@@ -6,6 +6,7 @@ import * as cors from "cors";
 import { NotFound } from "http-errors";
 import reasonPhrases from "./utils/reasonPhrases";
 import statusCodes from "./utils/statusCodes";
+import router from "./routers";
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // init routers
+app.use("/api/v1", router);
 
 // handle errors
 app.use(

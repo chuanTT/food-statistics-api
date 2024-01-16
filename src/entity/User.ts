@@ -1,4 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  BeforeInsert,
+} from "typeorm";
 import { GroupListFood } from "./GroupListFood";
 import { TimestampableEntity } from "./baseExtends";
 
@@ -19,7 +25,7 @@ export class User {
   @Column("nvarchar", { length: 64 })
   password: string;
 
-  @Column()
+  @Column("nvarchar", { nullable: true })
   avatar: string;
 
   @OneToMany(() => GroupListFood, (GroupListFood) => GroupListFood.user)
