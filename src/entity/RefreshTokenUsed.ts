@@ -9,6 +9,6 @@ export class RefreshTokenUsed {
   @ManyToOne(() => Keys, (keys) => keys.id)
   key: Keys;
 
-  @Column("nvarchar")
+  @Column("text")
   refreshToken: string;
 }

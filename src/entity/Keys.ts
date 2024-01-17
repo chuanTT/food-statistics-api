@@ -24,6 +24,6 @@ export class Keys {
   @Column("text")
   publicKey: string;
 
-  @Column("nvarchar")
+  @Column("text")
   refreshToken: string;
 }
