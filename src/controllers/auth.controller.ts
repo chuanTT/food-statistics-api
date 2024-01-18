@@ -1,10 +1,11 @@
-import { UnprocessableEntity } from "http-errors";
+import { UnprocessableEntity, Unauthorized } from "http-errors";
 import { NextFunction, Request, Response } from "express";
 import userServices from "../services/user.services";
 import accessServices from "../services/access.services";
 import { createTokenPair } from "../helpers/token";
 import { OK } from "../core/success.response";
 import { bcryptCompare } from "../utils/bcryptFuc";
+import { IRequest } from "../types";
 
 class AuthControllers {
   register = async (req: Request, res: Response, _next: NextFunction) => {
@@ -53,7 +54,6 @@ class AuthControllers {
       id,
     });
 
-    await accessServices.createRefreshTokenUsed(id)
     await accessServices.updateKeys({
       userId: id,
       publicKey,
@@ -64,9 +64,38 @@ class AuthControllers {
     new OK({
       data: {
         user: {
+          id,
           ...userData,
           ...timestampableEntity,
         },
+        token,
+        refreshToken,
+      },
+    }).send(res);
+  };
+
+  logout = async (req: IRequest, res: Response, _next: NextFunction) => {
+    const { user } = req.keyStore;
+    await accessServices.clearKeys(user.id);
+    new OK({}).send(res);
+  };
+
+  refreshToken = async (req: IRequest, res: Response, _next: NextFunction) => {
+    const { user } = req.keyStore;
+
+    const { token, refreshToken, publicKey, privateKey } = createTokenPair({
+      id: user?.id,
+    });
+
+    await accessServices.updateKeys({
+      userId: user.id,
+      privateKey,
+      publicKey,
+      refreshToken,
+    });
+
+    new OK({
+      data: {
         token,
         refreshToken,
       },

@@ -7,7 +7,6 @@ import {
   JoinColumn,
 } from "typeorm";
 import { User } from "./User";
-import { RefreshTokenUsed } from "./RefreshTokenUsed";
 
 @Entity()
 export class Keys {
@@ -18,15 +17,12 @@ export class Keys {
   @JoinColumn()
   user: User;
 
-  @OneToMany(() => RefreshTokenUsed, (refreshTokenUsed) => refreshTokenUsed.key)
-  refreshTokenUsed: RefreshTokenUsed[];
-
-  @Column("nvarchar")
+  @Column("nvarchar", { nullable: true })
   publicKey: string;
 
-  @Column("nvarchar")
+  @Column("nvarchar", { nullable: true })
   privateKey: string;
 
-  @Column("text")
+  @Column("text", { nullable: true })
   refreshToken: string;
 }

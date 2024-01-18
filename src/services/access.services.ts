@@ -1,17 +1,17 @@
 import { FindOneOptions } from "typeorm";
 import { AppDataSource } from "../data-source";
 import { Keys } from "../entity/Keys";
-import { RefreshTokenUsed } from "../entity/RefreshTokenUsed";
 
 class AccessServices {
   keysDB = AppDataSource.getRepository(Keys);
-  refreshTokenUsedDB = AppDataSource.getRepository(RefreshTokenUsed);
 
   findOneKey = async ({
     select = ["id", "refreshToken"],
     userID,
+    ...rest
   }: { userID: number } & FindOneOptions<Keys>) => {
     return await this.keysDB.findOne({
+      ...rest,
       select,
       where: {
         user: {
@@ -46,22 +46,12 @@ class AccessServices {
     );
   };
 
-  createRefreshTokenUsed = async (userID: number) => {
-    const resultKeys = await this.findOneKey({
-      select: [],
-      userID,
-    });
-    const refreshTokenUsed = new RefreshTokenUsed();
-    refreshTokenUsed.key = resultKeys;
-    refreshTokenUsed.refreshToken = resultKeys?.refreshToken;
-    return await this.refreshTokenUsedDB.save(refreshTokenUsed);
-  };
-
-  removeRefreshTokenUsed = async (idKey: number) => {
-    return this.refreshTokenUsedDB.delete({
-      key: {
-        id: idKey,
-      },
+  clearKeys = async (userId: number) => {
+    await this.updateKeys({
+      userId,
+      privateKey: null,
+      publicKey: null,
+      refreshToken: null,
     });
   };
 }
