@@ -21,8 +21,11 @@ export class Keys {
   @OneToMany(() => RefreshTokenUsed, (refreshTokenUsed) => refreshTokenUsed.key)
   refreshTokenUsed: RefreshTokenUsed[];
 
-  @Column("text")
+  @Column("nvarchar")
   publicKey: string;
+
+  @Column("nvarchar")
+  privateKey: string;
 
   @Column("text")
   refreshToken: string;

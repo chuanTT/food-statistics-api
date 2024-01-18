@@ -11,21 +11,25 @@ const isRequired = (value: any) => {
   return isError;
 };
 
-const isMin = (min: number) => (value: any) => {
-  let isError = true;
-  if (!isRequired(value) && value.length >= min) {
-    isError = false;
-  }
-  return isError;
-};
+const isMin = (min: number) =>
+  function childMin(value: any) {
+    let isError = true;
+    if (!isRequired(value) && value.length >= min) {
+      isError = false;
+    }
+    (childMin as any).parentName = isMin.name;
+    return isError;
+  };
 
-const isMax = (max: number) => (value: any) => {
-  let isError = true;
-  if (!isRequired(value) && value.length <= max) {
-    isError = false;
-  }
-  return isError;
-};
+const isMax = (max: number) =>
+  function childMax(value: any) {
+    let isError = true;
+    if (!isRequired(value) && value.length <= max) {
+      isError = false;
+    }
+    (childMax as any).parentName = isMax.name;
+    return isError;
+  };
 
 const isNumber = (value: any) => {
   let isError = true;
@@ -126,11 +130,10 @@ const ConfigError = (
 
   if (Array.isArray(rules) && rules?.length > 0) {
     for (const rule of rules) {
-      console.log(rule.name);
       const isError = dependent ? rule(value, object[dependent]) : rule(value);
 
       if (isError) {
-        msgErorr = msg[rule.name];
+        msgErorr = msg[rule?.parentName || rule.name];
         break;
       }
     }
