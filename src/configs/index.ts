@@ -5,6 +5,7 @@ const routerPath = {
   login: "/login",
   register: "/register",
 
-  groupListFood: "/group-list-food"
+  groupListFood: "/group-list-food",
+  listFood: "/list-food",
 };
 export default routerPath;

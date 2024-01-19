@@ -3,7 +3,8 @@ import {
   PrimaryGeneratedColumn,
   Column,
   ManyToOne,
-  OneToMany
+  OneToMany,
+  BeforeInsert
 } from "typeorm";
 import { User } from "./User";
 import { ListFood } from "./ListFood";
@@ -31,4 +32,10 @@ export class GroupListFood {
 
   @Column(() => TimestampableEntity, { prefix: false })
   timestampableEntity: TimestampableEntity;
+
+  @BeforeInsert()
+  insertDate() {
+    const timestamp = new TimestampableEntity();
+    this.timestampableEntity = timestamp.initDate();
+  }
 }

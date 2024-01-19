@@ -4,6 +4,7 @@ import {
   Column,
   ManyToOne,
   OneToMany,
+  BeforeInsert,
 } from "typeorm";
 import { GroupListFood } from "./GroupListFood";
 import { Food } from "./Food";
@@ -28,4 +29,10 @@ export class ListFood {
 
   @Column(() => TimestampableEntity, { prefix: false })
   timestampableEntity: TimestampableEntity;
+
+  @BeforeInsert()
+  insertDate() {
+    const timestamp = new TimestampableEntity();
+    this.timestampableEntity = timestamp.initDate();
+  }
 }

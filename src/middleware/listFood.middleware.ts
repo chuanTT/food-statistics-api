@@ -1,19 +1,19 @@
 import { UnprocessableEntity } from "http-errors";
 import { NextFunction, Request, Response } from "express";
-import { User } from "../entity/User";
-import { FindOneOptions } from "typeorm";
-import { funcWhereFind } from "../helpers";
-import userServices from "../services/user.services";
-import { TExistsCustomMiddleware } from "../types";
 
-export const existsUserMiddleware =
+import { funcWhereFind } from "../helpers";
+import { TExistsCustomMiddleware } from "../types";
+import { ListFood } from "../entity/ListFood";
+import listFoodServices from "../services/listFood.services";
+
+export const existsListFoodMiddleware =
   ({
-    where = ["username"],
+    where = ["id"],
     select = ["id"],
-    msgError = "Tài khoản đã tồn tại",
+    msgError = "Danh sách không tồn tại",
     isErrorExist = true,
     ...rest
-  }: TExistsCustomMiddleware<User>) =>
+  }: TExistsCustomMiddleware<ListFood>) =>
   async (req: Request, _res: Response, next: NextFunction) => {
     const newObject = {
       ...Object.assign({}, req.body),
@@ -26,7 +26,7 @@ export const existsUserMiddleware =
       obj: newObject,
     });
 
-    const result = await userServices.findOneUser({
+    const result = await listFoodServices.findOneListFood({
       select,
       where: newWhere,
       ...rest,

@@ -1,5 +1,23 @@
+import * as _ from "lodash";
+
 import { configValidateType } from "../types";
-import { isDependent, isMin, isRequired } from "../utils/validate";
+import {
+  isDependent,
+  isMin,
+  isNumber,
+  isRequired,
+  isValidDate,
+} from "../utils/validate";
+
+export const configDefaultID: configValidateType["body"] = {
+  id: {
+    rules: [isRequired, isNumber],
+    msg: {
+      isRequired: "Id không được để trống",
+      isNumber: "Id phải là số",
+    },
+  },
+};
 
 // user
 export const configPasswordBody: configValidateType = {
@@ -60,5 +78,80 @@ export const configLoginBody: configValidateType = {
   body: {
     ...configUserNameBody.body,
     ...configPasswordBody.body,
+  },
+};
+
+//  group list food
+
+export const configGroupListFood: configValidateType = {
+  body: {
+    name: {
+      rules: [isRequired],
+      msg: {
+        isRequired: "Vui lòng nhập tên nhóm danh sách",
+      },
+    },
+
+    people: {
+      rules: [isRequired, isNumber],
+      msg: {
+        isRequired: "Vui lòng nhập số người",
+      },
+      isDisableKey: true,
+    },
+
+    isPaid: {
+      rules: [isRequired, isNumber],
+      msg: {
+        isRequired: "Vui lòng chọn trạng thái",
+      },
+      isDisableKey: true,
+    },
+  },
+};
+
+export const configGroupListFoodUpdate: configValidateType = {
+  ...configGroupListFood,
+  params: {
+    ...configDefaultID,
+  },
+};
+
+// list food
+export const configListFood: configValidateType = {
+  body: {
+    idGroupList: {
+      rules: [isRequired, isNumber],
+      msg: {
+        isRequired: "Vui lòng nhập id nhóm danh sách",
+        isNumber: "id nhóm danh sách phải là số",
+      },
+    },
+
+    people: {
+      rules: [isRequired, isNumber],
+      msg: {
+        isRequired: "Vui lòng nhập số người",
+      },
+      isDisableKey: true,
+    },
+
+    date: {
+      rules: [isRequired, isValidDate],
+      msg: {
+        isRequired: "Vui lòng chọn ngày",
+        isValidDate: "Ngày không đúng định dạng",
+      },
+      isDisableKey: true,
+    },
+  },
+};
+
+export const configListFoodUpdate: configValidateType = {
+  body: {
+    ..._.omit(configListFood.body, "idGroupList"),
+  },
+  params: {
+    ...configDefaultID,
   },
 };

@@ -11,6 +11,7 @@ export const AppDataSource = new DataSource({
   connectorPackage: "mysql2",
   synchronize: true,
   logging: false,
+  charset: "utf8",
   entities: [__dirname + "/entity/*.ts"],
   migrations: [__dirname + "/migration/*.ts"],
   subscribers: [__dirname + "/subscribers/*.ts"],

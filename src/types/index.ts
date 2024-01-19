@@ -1,5 +1,6 @@
 import { Request } from "express";
 import { Keys } from "../entity/Keys";
+import { FindOneOptions } from "typeorm";
 
 // middleware request
 export type configValidateValueType = {
@@ -21,5 +22,13 @@ export type configValidateType = {
 
 export type IRequest = Request & {
   keyStore: Keys;
-  refreshToken?: string
+  refreshToken?: string;
+};
+
+type keyOfCustom<K> = keyof K;
+
+export type TExistsCustomMiddleware<T> = Omit<FindOneOptions<T>, "where"> & {
+  where?: keyOfCustom<T>[][] | keyOfCustom<T>[];
+  msgError?: string;
+  isErrorExist?: boolean;
 };

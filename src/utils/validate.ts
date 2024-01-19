@@ -80,6 +80,16 @@ const isValueArray = (value: any) => {
   return isError;
 };
 
+export const isValidDate = (dateStr: string) => {
+  const isError = true;
+
+  if (!isRequired(dateStr)) {
+    const d = new Date(dateStr);
+    return isNaN(d as any);
+  }
+  return isError;
+}
+
 const ObjJson = (value: any) => {
   let result = {};
   try {
