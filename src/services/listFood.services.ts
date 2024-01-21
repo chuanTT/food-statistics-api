@@ -1,4 +1,4 @@
-import { FindOneOptions } from "typeorm";
+import { FindManyOptions, FindOneOptions } from "typeorm";
 import { AppDataSource } from "../data-source";
 import { ListFood } from "./../entity/ListFood";
 import groupListFoodServices from "./groupListFood.services";
@@ -11,6 +11,14 @@ type TcreateGroupListFood = {
 
 class ListFoodServices {
   ListFoodDB = AppDataSource.manager.getRepository(ListFood);
+
+  findListFood = async ({
+    select = ["id"],
+    ...rest
+  }: FindManyOptions<ListFood>) => {
+    const result = await this.ListFoodDB.find({ select, ...rest });
+    return result;
+  };
 
   findOneListFood = async ({
     select = ["id"],

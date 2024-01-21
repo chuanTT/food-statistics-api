@@ -3,6 +3,7 @@ import { BadRequest } from "http-errors";
 import { CREATED, OK } from "../core/success.response";
 import groupListFoodServices from "../services/groupListFood.services";
 import { IRequest } from "../types";
+import listFoodServices from "../services/listFood.services";
 
 class GroupListFoodController {
   getAll = async (req: Request, res: Response) => {};
@@ -46,7 +47,13 @@ class GroupListFoodController {
 
     new OK({}).send(res);
   };
-  delete = async (req: Request, res: Response) => {};
+  delete = async (req: Request, res: Response) => {
+    const { id } = req.params;
+
+    await groupListFoodServices.deleteGroupListFood(Number(id));
+
+    return new OK({}).send(res);
+  };
 }
 
 export default new GroupListFoodController();
