@@ -18,6 +18,18 @@ type ICreateGroupListFood = {
 class GroupListFoodServices {
   groupListFoodDB = AppDataSource.manager.getRepository(GroupListFood);
 
+  findAndCountGroupListFood = async ({}) => {
+    const [items, count] = await this.groupListFoodDB.findAndCount({
+      skip: 0,
+      take: 10,
+    });
+
+    return {
+      items,
+      count,
+    };
+  };
+
   findOneGroupListFood = async ({
     select = ["id"],
     ...rest
@@ -87,11 +99,13 @@ class GroupListFoodServices {
               foodIds = [...foodIds, ...item.foods.map((food) => food.id)];
             }
           });
-          foodIds.length > 0 && (await queryRunner.manager.delete(Food, foodIds))
-          listFoodIds.length > 0 && (await queryRunner.manager.delete(ListFood, listFoodIds))
+          foodIds.length > 0 &&
+            (await queryRunner.manager.delete(Food, foodIds));
+          listFoodIds.length > 0 &&
+            (await queryRunner.manager.delete(ListFood, listFoodIds));
         }
 
-        await queryRunner.manager.delete(GroupListFood, id)
+        await queryRunner.manager.delete(GroupListFood, id);
         await queryRunner.commitTransaction();
         return true;
       },

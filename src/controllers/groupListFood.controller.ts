@@ -5,7 +5,11 @@ import groupListFoodServices from "../services/groupListFood.services";
 import { IRequest } from "../types";
 
 class GroupListFoodController {
-  getAll = async (req: Request, res: Response) => {};
+  getAll = async (req: Request, res: Response) => {
+    new OK({
+      data: await groupListFoodServices.findAndCountGroupListFood({})
+    }).send(res)
+  };
   getOne = async (req: Request, res: Response) => {};
   create = async (req: IRequest, res: Response) => {
     const { user } = req.keyStore;
