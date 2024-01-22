@@ -1,9 +1,8 @@
-import { NextFunction, Request, Response } from "express";
+import { Request, Response } from "express";
 import { BadRequest } from "http-errors";
 import { CREATED, OK } from "../core/success.response";
 import groupListFoodServices from "../services/groupListFood.services";
 import { IRequest } from "../types";
-import listFoodServices from "../services/listFood.services";
 
 class GroupListFoodController {
   getAll = async (req: Request, res: Response) => {};
@@ -50,9 +49,14 @@ class GroupListFoodController {
   delete = async (req: Request, res: Response) => {
     const { id } = req.params;
 
-    await groupListFoodServices.deleteGroupListFood(Number(id));
+    const successGroupList = await groupListFoodServices.deleteGroupListFood(
+      Number(id)
+    );
 
-    return new OK({}).send(res);
+    if (successGroupList) {
+      return new OK({}).send(res);
+    }
+    throw BadRequest();
   };
 }
 

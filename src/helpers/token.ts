@@ -1,7 +1,7 @@
 import { randomBytes } from "node:crypto";
 import { Unauthorized } from "http-errors";
 import * as JWT from "jsonwebtoken";
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Response } from "express";
 import accessServices from "../services/access.services";
 import { IRequest } from "../types";
 import routerPath from "../configs";

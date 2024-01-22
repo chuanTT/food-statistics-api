@@ -2,6 +2,8 @@ import { FindManyOptions, FindOneOptions } from "typeorm";
 import { AppDataSource } from "../data-source";
 import { ListFood } from "./../entity/ListFood";
 import groupListFoodServices from "./groupListFood.services";
+import { funcTransactionsQuery } from "../helpers/transactionsQuery";
+import { Food } from "../entity/Food";
 
 type TcreateGroupListFood = {
   idGroupList: number;
@@ -62,6 +64,28 @@ class ListFoodServices {
     return await this.ListFoodDB.update(id, {
       date,
       people,
+    });
+  };
+
+  deleteListFood = async (idKey: number) => {
+    return await funcTransactionsQuery({
+      callBack: async (queryRunner) => {
+        const resultFood = await queryRunner.manager.find(Food, {
+          select: ["id"],
+          where: {
+            listFood: {
+              id: idKey,
+            },
+          },
+        });
+
+        if (resultFood?.length > 0) {
+          await queryRunner.manager.delete(Food, resultFood);
+        }
+        await queryRunner.manager.delete(ListFood, idKey);
+        await queryRunner.commitTransaction();
+        return true;
+      },
     });
   };
 }

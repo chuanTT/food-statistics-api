@@ -6,6 +6,7 @@ import listFoodServices from "./listFood.services";
 import { ListFood } from "../entity/ListFood";
 import { Food } from "../entity/Food";
 import { awaitAll } from "../utils/functions";
+import { funcTransactionsQuery } from "../helpers/transactionsQuery";
 
 type ICreateGroupListFood = {
   userId: number;
@@ -63,9 +64,9 @@ class GroupListFoodServices {
   };
 
   deleteGroupListFood = async (id: number) => {
-    await AppDataSource.transaction(async (transactionalEntityManager) => {
-      try {
-        const resultListFood = await transactionalEntityManager.find(ListFood, {
+    return await funcTransactionsQuery({
+      callBack: async (queryRunner) => {
+        const resultListFood = await queryRunner.manager.find(ListFood, {
           select: ["id"],
           where: {
             groupListFood: {
@@ -78,14 +79,22 @@ class GroupListFoodServices {
         });
 
         if (resultListFood?.length > 0) {
-          for (const listFood of resultListFood) {
-            listFood.foods = []; //
-          }
-          await transactionalEntityManager.remove(resultListFood);
+          let foodIds: number[] = [];
+          let listFoodIds: number[] = [];
+          resultListFood.forEach((item) => {
+            listFoodIds.push(item.id);
+            if (item.foods?.length > 0) {
+              foodIds = [...foodIds, ...item.foods.map((food) => food.id)];
+            }
+          });
+          foodIds.length > 0 && (await queryRunner.manager.delete(Food, foodIds))
+          listFoodIds.length > 0 && (await queryRunner.manager.delete(ListFood, listFoodIds))
         }
 
-        await transactionalEntityManager.delete(GroupListFood, id);
-      } catch {}
+        await queryRunner.manager.delete(GroupListFood, id)
+        await queryRunner.commitTransaction();
+        return true;
+      },
     });
   };
 }

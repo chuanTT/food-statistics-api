@@ -27,8 +27,15 @@ export type IRequest = Request & {
 
 type keyOfCustom<K> = keyof K;
 
+type keyCustomValue<K> = {
+  key: keyOfCustom<K>;
+  value: string;
+};
+
+export type CustomWhereExistsMiddleware<T> = keyOfCustom<T> | keyCustomValue<T>;
+
 export type TExistsCustomMiddleware<T> = Omit<FindOneOptions<T>, "where"> & {
-  where?: keyOfCustom<T>[][] | keyOfCustom<T>[];
+  where?: CustomWhereExistsMiddleware<T>[][] | CustomWhereExistsMiddleware<T>[];
   msgError?: string;
   isErrorExist?: boolean;
 };

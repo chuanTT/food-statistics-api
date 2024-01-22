@@ -8,6 +8,7 @@ import {
   configListFoodUpdate,
 } from "../configs/configSchemaValidate";
 import { existsListFoodMiddleware } from "../middleware/listFood.middleware";
+import { existsGroupListMiddleware } from "../middleware/groupListFood.middleware";
 const router = express.Router();
 
 router.get("/", asyncHandler(listFoodController.getAll));
@@ -16,9 +17,17 @@ router.get("/:id", asyncHandler(listFoodController.getOne));
 router.post(
   "/",
   validateRequest(configListFood),
+  existsGroupListMiddleware({
+    isErrorExist: false,
+    where: [
+      {
+        key: "id",
+        value: "idGroupList",
+      },
+    ],
+  }),
   asyncHandler(listFoodController.create)
 );
-
 
 router.patch(
   "/:id",

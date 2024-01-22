@@ -29,6 +29,7 @@ export const existsGroupListMiddleware =
       obj: newObject,
     });
 
+
     const result = await groupListFoodServices.findOneGroupListFood({
       select,
       where: newWhere,
@@ -37,7 +38,6 @@ export const existsGroupListMiddleware =
       },
       ...rest,
     });
-
 
     if (!result) {
       isErrorExist ? next() : next(UnprocessableEntity(msgError));

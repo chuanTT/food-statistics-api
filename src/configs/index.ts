@@ -7,5 +7,6 @@ const routerPath = {
 
   groupListFood: "/group-list-food",
   listFood: "/list-food",
+  food: "/food",
 };
 export default routerPath;

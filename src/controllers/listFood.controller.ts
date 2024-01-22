@@ -26,7 +26,7 @@ class ListFoodController {
       }).send(res);
     }
 
-    throw BadRequest();
+    throw BadRequest("33");
   };
   update = async (req: Request, res: Response) => {
     const { id } = req.params;
@@ -41,7 +41,14 @@ class ListFoodController {
     }
     new OK({}).send(res);
   };
-  delete = async (req: Request, res: Response) => {};
+  delete = async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const isDeleteListFood = await listFoodServices.deleteListFood(Number(id));
+    if (isDeleteListFood) {
+      return new OK({}).send(res);
+    }
+    throw BadRequest();
+  };
 }
 
 export default new ListFoodController();
