@@ -4,7 +4,7 @@ import {
   Column,
   ManyToOne,
   OneToMany,
-  BeforeInsert
+  BeforeInsert,
 } from "typeorm";
 import { User } from "./User";
 import { ListFood } from "./ListFood";
@@ -18,7 +18,7 @@ export class GroupListFood {
   @Column("nvarchar", { length: 200 })
   name: string;
 
-  @Column("integer")
+  @Column("integer", { default: 1 })
   people: number;
 
   @Column("integer", { default: 0 })

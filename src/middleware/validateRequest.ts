@@ -35,6 +35,8 @@ const validateRequest =
       }
     }
 
+    console.log(objErorr)
+
     if (_.isEmpty(objErorr)) {
       return next();
     } else {

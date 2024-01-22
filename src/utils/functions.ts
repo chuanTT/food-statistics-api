@@ -1,39 +1,44 @@
-export const joinUrl = (dir?: string, BASE_URL: string = '/', link = '/') => {
-  const maxlength = BASE_URL.length
-  const str = BASE_URL.substring(maxlength - 1, maxlength)
+import { parseArr } from "./validate";
+
+export const joinUrl = (dir?: string, BASE_URL: string = "/", link = "/") => {
+  const maxlength = BASE_URL.length;
+  const str = BASE_URL.substring(maxlength - 1, maxlength);
   if (str !== link) {
-    BASE_URL += link
+    BASE_URL += link;
   }
 
   if (BASE_URL?.length > 1) {
-    BASE_URL = BASE_URL.replace(/^[\\/]{1,}/, '')
+    BASE_URL = BASE_URL.replace(/^[\\/]{1,}/, "");
   }
 
   if (dir) {
-    dir = dir.replace(/^[\\/]{1,}/, '')
-    return `${BASE_URL}${dir}`
+    dir = dir.replace(/^[\\/]{1,}/, "");
+    return `${BASE_URL}${dir}`;
   } else {
-    BASE_URL = BASE_URL.replace(/[\\/]{1,}$/, '')
-    return BASE_URL
+    BASE_URL = BASE_URL.replace(/[\\/]{1,}$/, "");
+    return BASE_URL;
   }
-}
+};
 
 export const joinPathParent = (...arg: string[]) => {
-  let str = ''
+  let str = "";
   if (arg && arg?.length > 0) {
     arg.forEach((item) => {
-      str = joinUrl(item, str)
-    })
+      str = joinUrl(item, str);
+    });
   }
-  return str
-}
+  return str;
+};
 
-export const awaitAll = <T, R>(list: T[], asyncFn: (item: T, index: number) => R) => {
-  const promises: R[] = []
+export const awaitAll = <T, R>(
+  list: T[],
+  asyncFn: (item: T, index: number) => R
+) => {
+  const promises: R[] = [];
 
   list.map((x, i) => {
-    promises.push(asyncFn(x, i))
-  })
+    promises.push(asyncFn(x, i));
+  });
 
-  return Promise.all(promises)
-}
+  return Promise.all(promises);
+};

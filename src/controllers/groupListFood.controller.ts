@@ -6,9 +6,15 @@ import { IRequest } from "../types";
 
 class GroupListFoodController {
   getAll = async (req: Request, res: Response) => {
+    const { page, limit, searchName } = req.query;
+
     new OK({
-      data: await groupListFoodServices.findAndCountGroupListFood({})
-    }).send(res)
+      data: await groupListFoodServices.findAndCountGroupListFood({
+        page: page ? Number(page) : undefined,
+        limit: limit ? Number(limit) : undefined,
+        nameStr: searchName?.toString() ?? "",
+      }),
+    }).send(res);
   };
   getOne = async (req: Request, res: Response) => {};
   create = async (req: IRequest, res: Response) => {

@@ -1,12 +1,12 @@
-import { FindOneOptions } from "typeorm";
+import { FindOneOptions, ILike } from "typeorm";
 import { AppDataSource } from "../data-source";
 import { GroupListFood } from "../entity/GroupListFood";
 import userServices from "./user.services";
-import listFoodServices from "./listFood.services";
 import { ListFood } from "../entity/ListFood";
 import { Food } from "../entity/Food";
-import { awaitAll } from "../utils/functions";
 import { funcTransactionsQuery } from "../helpers/transactionsQuery";
+import paginationShared from "../helpers/paginationShared";
+import { pageAndLimit } from "../types";
 
 type ICreateGroupListFood = {
   userId: number;
@@ -18,16 +18,43 @@ type ICreateGroupListFood = {
 class GroupListFoodServices {
   groupListFoodDB = AppDataSource.manager.getRepository(GroupListFood);
 
-  findAndCountGroupListFood = async ({}) => {
-    const [items, count] = await this.groupListFoodDB.findAndCount({
-      skip: 0,
-      take: 10,
+  findAndCountGroupListFood = async ({
+    page,
+    limit,
+    nameStr,
+  }: pageAndLimit & { nameStr?: string }) => {
+    return await paginationShared({
+      page,
+      limit,
+      serviceCallBack: async ({ page, limit }) =>
+        await this.groupListFoodDB.findAndCount({
+          skip: page,
+          take: limit,
+          order: {
+            id: "DESC",
+          },
+          relations: {
+            listFood: true,
+          },
+          where: {
+            name: ILike(`%${nameStr}%`),
+          },
+        }),
+      customItems: (items) =>
+        items.map((item) => {
+          const { timestampableEntity, listFood, ...spread } = item;
+          const totalPrice = listFood?.reduce((total, current) => {
+            const totalPriceCurrent = Number(current.totalPrice);
+            const people = current.people || item.people
+            return total + Math.round(totalPriceCurrent / people);
+          }, 0);
+          return {
+            ...spread,
+            totalPrice,
+            ...timestampableEntity,
+          };
+        }),
     });
-
-    return {
-      items,
-      count,
-    };
   };
 
   findOneGroupListFood = async ({
@@ -85,9 +112,7 @@ class GroupListFoodServices {
               id,
             },
           },
-          relations: {
-            foods: true,
-          },
+          loadRelationIds: true,
         });
 
         if (resultListFood?.length > 0) {
@@ -96,7 +121,7 @@ class GroupListFoodServices {
           resultListFood.forEach((item) => {
             listFoodIds.push(item.id);
             if (item.foods?.length > 0) {
-              foodIds = [...foodIds, ...item.foods.map((food) => food.id)];
+              foodIds = [...foodIds, ...(item.foods as unknown as number[])];
             }
           });
           foodIds.length > 0 &&

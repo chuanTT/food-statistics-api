@@ -6,12 +6,17 @@ import {
   configDefaultID,
   configListFood,
   configListFoodUpdate,
+  configPageAndLimit,
 } from "../configs/configSchemaValidate";
 import { existsListFoodMiddleware } from "../middleware/listFood.middleware";
 import { existsGroupListMiddleware } from "../middleware/groupListFood.middleware";
 const router = express.Router();
 
-router.get("/", asyncHandler(listFoodController.getAll));
+router.get(
+  "/",
+  validateRequest(configPageAndLimit),
+  asyncHandler(listFoodController.getAll)
+);
 router.get("/:id", asyncHandler(listFoodController.getOne));
 
 router.post(

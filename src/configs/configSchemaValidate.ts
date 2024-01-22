@@ -4,9 +4,12 @@ import { configValidateType } from "../types";
 import {
   isDependent,
   isMin,
+  isMinLength,
   isNumber,
   isRequired,
   isValidDate,
+  isValidateArrayItem,
+  isValueArray,
 } from "../utils/validate";
 
 export const configDefaultID: configValidateType["body"] = {
@@ -15,6 +18,28 @@ export const configDefaultID: configValidateType["body"] = {
     msg: {
       isRequired: "Id không được để trống",
       isNumber: "Id phải là số",
+    },
+  },
+};
+
+export const configPageAndLimit: configValidateType = {
+  query: {
+    page: {
+      rules: [isRequired, isNumber],
+      msg: {
+        isRequired: "Vui lòng nhập số trang",
+        isNumber: "Số trang không đúng dịnh dạng",
+      },
+      isDisableKey: true,
+    },
+
+    limit: {
+      rules: [isRequired, isNumber],
+      msg: {
+        isRequired: "Vui lòng nhập giới hạn số trang",
+        isNumber: "Giới hạn số trang không đúng dịnh dạng",
+      },
+      isDisableKey: true,
     },
   },
 };
@@ -153,5 +178,29 @@ export const configListFoodUpdate: configValidateType = {
   },
   params: {
     ...configDefaultID,
+  },
+};
+
+// food
+// idListFood
+export const configFoodCreate: configValidateType = {
+  body: {
+    idListFood: {
+      rules: [isRequired, isNumber],
+      msg: {
+        isRequired: "Vui lòng chọn id danh sách",
+        isNumber: "id danh sách phải là số",
+      },
+    },
+
+    foods: {
+      rules: [isRequired, isValueArray, isValidateArrayItem(), isMinLength(1)],
+      msg: {
+        isRequired: "Vui lòng chọn id danh sách",
+        isValueArray: "Không đúng định dạng",
+        isMinLength: "Tối thiểu một phần tử",
+        isValidateArrayItem: "Phần tử không đúng định dạng"
+      },
+    },
   },
 };

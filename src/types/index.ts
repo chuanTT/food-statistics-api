@@ -39,3 +39,8 @@ export type TExistsCustomMiddleware<T> = Omit<FindOneOptions<T>, "where"> & {
   msgError?: string;
   isErrorExist?: boolean;
 };
+
+export type pageAndLimit = {
+  page?: number;
+  limit?: number;
+};

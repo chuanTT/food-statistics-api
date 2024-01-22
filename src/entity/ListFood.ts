@@ -27,6 +27,9 @@ export class ListFood {
   @OneToMany(() => Food, (Food) => Food.listFood)
   foods: Food[];
 
+  @Column("bigint", { default: 0 })
+  totalPrice: number;
+
   @Column(() => TimestampableEntity, { prefix: false })
   timestampableEntity: TimestampableEntity;
 

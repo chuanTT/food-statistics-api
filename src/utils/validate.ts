@@ -88,7 +88,78 @@ export const isValidDate = (dateStr: string) => {
     return isNaN(d as any);
   }
   return isError;
-}
+};
+
+export const parseArr = (value: any) => {
+  let arr = [];
+  try {
+    const isArray = Array.isArray(value);
+    arr = isArray ? value : JSON.parse(value);
+  } catch {}
+  return arr;
+};
+
+export const isMinLength = (min: number) =>
+  function childMinLength(value: any) {
+    let isError = true;
+    const arrValue = parseArr(value);
+    console.log(arrValue)
+    if (!isRequired(value) && arrValue.length >= min) {
+      isError = false;
+    }
+    (childMinLength as any).parentName = isMinLength.name;
+    return isError;
+  };
+
+type typeVariable =
+  | "string"
+  | "number"
+  | "bigint"
+  | "boolean"
+  | "symbol"
+  | "undefined"
+  | "object"
+  | "function";
+
+type schemaObjParams = {
+  [key: string]: typeVariable | typeVariable[];
+};
+
+export const isValidateArrayItem = (
+  schemaObj: schemaObjParams = {
+    name: "string",
+    price: "number",
+    count: ["number", "undefined"],
+  }
+) => {
+  const childArrayItem = (value: any[]) => {
+    let isError = false;
+    const arrValue = parseArr(value);
+
+    if (Array.isArray(arrValue)) {
+      for (let obj of arrValue) {
+        for (let key in schemaObj) {
+          const typeSchema = schemaObj[key];
+          const typeParams = typeof obj[key];
+          if (
+            !(
+              (Array.isArray(typeSchema) && typeSchema.includes(typeParams)) ||
+              typeParams === typeSchema
+            )
+          ) {
+            isError = true;
+          }
+        }
+      }
+    } else {
+      isError = true;
+    }
+
+    (childArrayItem as any).parentName = childArrayItem.name;
+
+    return childArrayItem;
+  };
+};
 
 const ObjJson = (value: any) => {
   let result = {};

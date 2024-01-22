@@ -5,12 +5,17 @@ import {
   configDefaultID,
   configGroupListFood,
   configGroupListFoodUpdate,
+  configPageAndLimit,
 } from "../configs/configSchemaValidate";
 import { asyncHandler } from "../helpers";
 import { existsGroupListMiddleware } from "../middleware/groupListFood.middleware";
 const router = express.Router();
 
-router.get("/", asyncHandler(groupListFoodController.getAll));
+router.get(
+  "/",
+  validateRequest(configPageAndLimit),
+  asyncHandler(groupListFoodController.getAll)
+);
 router.get("/:id", asyncHandler(groupListFoodController.getOne));
 
 router.post(
