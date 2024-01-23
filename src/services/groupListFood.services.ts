@@ -1,4 +1,4 @@
-import { FindOneOptions, ILike } from "typeorm";
+import { FindManyOptions, FindOneOptions, ILike } from "typeorm";
 import { AppDataSource } from "../data-source";
 import { GroupListFood } from "../entity/GroupListFood";
 import userServices from "./user.services";
@@ -10,7 +10,7 @@ import { pageAndLimit } from "../types";
 
 type ICreateGroupListFood = {
   userId: number;
-  name: string;
+  name?: string;
   people?: number;
   isPaid?: number;
 };
@@ -45,7 +45,7 @@ class GroupListFoodServices {
           const { timestampableEntity, listFood, ...spread } = item;
           const totalPrice = listFood?.reduce((total, current) => {
             const totalPriceCurrent = Number(current.totalPrice);
-            const people = current.people || item.people
+            const people = current.people || item.people;
             return total + Math.round(totalPriceCurrent / people);
           }, 0);
           return {
@@ -55,6 +55,14 @@ class GroupListFoodServices {
           };
         }),
     });
+  };
+
+  findGroupListFood = async ({
+    select = ["id"],
+    ...rest
+  }: FindManyOptions<GroupListFood>) => {
+    const result = await this.groupListFoodDB.find({ select, ...rest });
+    return result;
   };
 
   findOneGroupListFood = async ({

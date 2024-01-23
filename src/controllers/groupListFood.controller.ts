@@ -68,6 +68,51 @@ class GroupListFoodController {
 
     throw BadRequest();
   };
+
+  getStatistical = async (req: IRequest, res: Response) => {
+    const { user } = req.keyStore;
+
+    let allMoneySpent = 0;
+
+    const resultGroupFood = await groupListFoodServices.findGroupListFood({
+      select: ["id", "people", "listFood"],
+      where: {
+        user: {
+          id: user.id,
+        },
+      },
+      relations: {
+        listFood: true,
+      },
+    });
+
+    if (resultGroupFood) {
+      resultGroupFood.forEach((item) => {
+        const { listFood } = item;
+        allMoneySpent += listFood.reduce((total, current) => {
+          const people = current?.people || item?.people;
+          return total + Math.round(Number(current?.totalPrice) / people);
+        }, 0);
+      });
+    }
+
+    new OK({
+      data: {
+        allMoneySpent,
+      },
+    }).send(res);
+  };
+
+  paid = async (req: Request, res: Response) => {
+    const { id, isPaid } = req.body;
+
+    await groupListFoodServices.updateGroupListFood({
+      id: Number(id),
+      isPaid: Number(isPaid),
+    });
+
+    new OK({}).send(res);
+  };
   create = async (req: IRequest, res: Response) => {
     const { user } = req.keyStore;
     const { name, people, isPaid } = req.body;

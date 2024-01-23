@@ -4,6 +4,7 @@ import validateRequest from "../middleware/validateRequest";
 import {
   configDefaultID,
   configGroupListFood,
+  configGroupListFoodPaid,
   configGroupListFoodUpdate,
   configPageAndLimit,
 } from "../configs/configSchemaValidate";
@@ -16,6 +17,12 @@ router.get(
   validateRequest(configPageAndLimit),
   asyncHandler(groupListFoodController.getAll)
 );
+
+router.get(
+  "/statistical",
+  asyncHandler(groupListFoodController.getStatistical)
+);
+
 router.get(
   "/:id",
   validateRequest({
@@ -31,6 +38,15 @@ router.post(
   "/",
   validateRequest(configGroupListFood),
   asyncHandler(groupListFoodController.create)
+);
+
+router.patch(
+  "/paid",
+  validateRequest(configGroupListFoodPaid),
+  existsGroupListMiddleware({
+    isErrorExist: false,
+  }),
+  asyncHandler(groupListFoodController.paid)
 );
 
 router.patch(

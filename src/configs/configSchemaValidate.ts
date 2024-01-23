@@ -142,6 +142,19 @@ export const configGroupListFoodUpdate: configValidateType = {
   },
 };
 
+export const configGroupListFoodPaid: configValidateType = {
+  body: {
+    ...configDefaultID,
+    isPaid: {
+      rules: [isRequired, isNumber],
+      msg: {
+        isRequired: "Vui lòng nhập trạng thái",
+        isNumber: "Trạng thái phải là số",
+      },
+    },
+  },
+};
+
 // list food
 export const configListFood: configValidateType = {
   body: {
@@ -214,4 +227,32 @@ export const configFoodDelete: configValidateType = {
       },
     },
   },
+};
+
+export const configFoodUpdate: configValidateType = {
+  body: {
+    name: {
+      rules: [isRequired],
+      msg: {
+        isRequired: "Vui lòng nhập tên",
+      },
+    },
+
+    price: {
+      rules: [isRequired, isNumber],
+      msg: {
+        isRequired: "Vui lòng nhập giá",
+        isNumber: "Giá phải là số",
+      },
+    },
+
+    count: {
+      rules: [isRequired, isNumber],
+      msg: {
+        isRequired: "Vui lòng nhập số lượng",
+        isNumber: "Số lượng phải là số",
+      },
+    },
+  },
+  params: configDefaultID,
 };

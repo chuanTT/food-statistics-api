@@ -1,4 +1,4 @@
-import { In } from "typeorm";
+import { FindOneOptions, In } from "typeorm";
 import { AppDataSource } from "../data-source";
 import { Food } from "../entity/Food";
 import { funcTransactionsQuery } from "../helpers/transactionsQuery";
@@ -15,8 +15,23 @@ type deleteFoodsProps = {
   foodIds: number[];
 };
 
+type updateFoodsProps = {
+  name: string;
+  price: number;
+  count: number;
+  id: number;
+};
+
 class FoodServices {
   foodDB = AppDataSource.getRepository(Food);
+
+  findOneListFood = async ({
+    select = ["id"],
+    ...rest
+  }: FindOneOptions<Food>) => {
+    const result = await this.foodDB.findOne({ select, ...rest });
+    return result;
+  };
 
   createFoods = async ({ foods, listFoodId }: createFoodsProps) => {
     const newFoods: any[] = foods.map((food) => ({
@@ -89,6 +104,39 @@ class FoodServices {
         }
         return null;
       },
+    });
+  };
+
+  updateFoods = async ({ name, count, price, id }: updateFoodsProps) => {
+    const resultFood = await this.findOneListFood({
+      select: ["id", "count", "name", "price"],
+      relations: {
+        listFood: true,
+      },
+      where: {
+        id,
+      },
+    });
+
+    const isChangeCount = resultFood?.count !== Number(count);
+    const isChangePrice = resultFood?.price !== Number(price);
+
+    if (isChangeCount || isChangePrice) {
+      const newTotalPrice =
+        resultFood?.listFood?.totalPrice -
+        resultFood?.price * resultFood?.count;
+
+      const newCount = isChangeCount ? count : resultFood?.count;
+      const newPrice = isChangePrice ? price : resultFood?.price;
+
+      await listFoodServices.ListFoodDB.update(resultFood?.listFood?.id, {
+        totalPrice: newTotalPrice + newPrice * newCount,
+      });
+    }
+    await this.foodDB.update(id, {
+      name,
+      count: count <= 0 ? 1 : count,
+      price,
     });
   };
 }

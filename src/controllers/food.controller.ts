@@ -22,6 +22,22 @@ class FoodController {
     throw BadRequest();
   };
 
+  update = async (req: IRequest, res: Response) => {
+    const { id } = req.params;
+    const { name, price, count } = req.body;
+
+    if (name || price || count) {
+      await foodServices.updateFoods({
+        name,
+        count: Number(count),
+        price: Number(price),
+        id: Number(id),
+      });
+    }
+
+    new OK({}).send(res);
+  };
+
   delete = async (req: IRequest, res: Response) => {
     const { foodIds } = req.body;
     const newFoodIds = parseArr(foodIds);
@@ -33,7 +49,7 @@ class FoodController {
     if (resultDeleteFood) {
       return new OK({}).send(res);
     }
-    throw BadRequest()
+    throw BadRequest();
   };
 }
 
