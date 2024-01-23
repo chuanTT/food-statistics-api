@@ -16,7 +16,16 @@ router.get(
   validateRequest(configPageAndLimit),
   asyncHandler(groupListFoodController.getAll)
 );
-router.get("/:id", asyncHandler(groupListFoodController.getOne));
+router.get(
+  "/:id",
+  validateRequest({
+    params: configDefaultID,
+  }),
+  existsGroupListMiddleware({
+    isErrorExist: false,
+  }),
+  asyncHandler(groupListFoodController.getOne)
+);
 
 router.post(
   "/",

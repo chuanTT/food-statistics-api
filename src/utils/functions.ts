@@ -1,5 +1,3 @@
-import { parseArr } from "./validate";
-
 export const joinUrl = (dir?: string, BASE_URL: string = "/", link = "/") => {
   const maxlength = BASE_URL.length;
   const str = BASE_URL.substring(maxlength - 1, maxlength);

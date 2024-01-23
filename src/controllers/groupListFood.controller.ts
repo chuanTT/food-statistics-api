@@ -16,7 +16,58 @@ class GroupListFoodController {
       }),
     }).send(res);
   };
-  getOne = async (req: Request, res: Response) => {};
+  getOne = async (req: Request, res: Response) => {
+    const { id } = req.params;
+
+    const resultOneGroupListFood =
+      await groupListFoodServices.findOneGroupListFood({
+        select: [],
+        where: {
+          id: Number(id),
+        },
+        relations: {
+          listFood: {
+            foods: true,
+          },
+        },
+      });
+
+    if (resultOneGroupListFood) {
+      const { timestampableEntity, listFood, ...spread } =
+        resultOneGroupListFood;
+
+      const newResultOneGroupListFood = {
+        ...spread,
+        totalPrice: 0,
+        ...timestampableEntity,
+        listFood,
+      };
+
+      const newListFoods = listFood.map((items) => {
+        const { timestampableEntity, totalPrice, people, foods, ...spread } =
+          items;
+        const numberTotalPrice = Number(totalPrice);
+        const newPeople = people || newResultOneGroupListFood.people;
+        newResultOneGroupListFood.totalPrice += Math.round(
+          totalPrice / newPeople
+        );
+
+        return {
+          ...spread,
+          totalPrice: numberTotalPrice,
+          people: people,
+          ...timestampableEntity,
+          foods,
+        };
+      });
+
+      return new OK({
+        data: { ...newResultOneGroupListFood, listFood: newListFoods },
+      }).send(res);
+    }
+
+    throw BadRequest();
+  };
   create = async (req: IRequest, res: Response) => {
     const { user } = req.keyStore;
     const { name, people, isPaid } = req.body;

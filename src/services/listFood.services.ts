@@ -88,6 +88,16 @@ class ListFoodServices {
       },
     });
   };
+
+  incrementListFood = async (idKey: number, increment: number) => {
+    return this.ListFoodDB.increment(
+      {
+        id: idKey,
+      },
+      "totalPrice",
+      increment
+    );
+  };
 }
 
 export default new ListFoodServices();

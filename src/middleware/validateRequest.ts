@@ -35,7 +35,7 @@ const validateRequest =
       }
     }
 
-    console.log(objErorr)
+    console.log("objErorr", objErorr)
 
     if (_.isEmpty(objErorr)) {
       return next();

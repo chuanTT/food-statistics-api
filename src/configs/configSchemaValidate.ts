@@ -182,7 +182,6 @@ export const configListFoodUpdate: configValidateType = {
 };
 
 // food
-// idListFood
 export const configFoodCreate: configValidateType = {
   body: {
     idListFood: {
@@ -194,12 +193,24 @@ export const configFoodCreate: configValidateType = {
     },
 
     foods: {
-      rules: [isRequired, isValueArray, isValidateArrayItem(), isMinLength(1)],
+      rules: [isValueArray, isMinLength(1), isValidateArrayItem()],
       msg: {
-        isRequired: "Vui lòng chọn id danh sách",
         isValueArray: "Không đúng định dạng",
         isMinLength: "Tối thiểu một phần tử",
-        isValidateArrayItem: "Phần tử không đúng định dạng"
+        isValidateArrayItem: "Phần tử không đúng định dạng",
+      },
+    },
+  },
+};
+
+export const configFoodDelete: configValidateType = {
+  body: {
+    foodIds: {
+      rules: [isValueArray, isMinLength(1), isValidateArrayItem("number")],
+      msg: {
+        isValueArray: "Không đúng định dạng",
+        isMinLength: "Tối thiểu một phần tử",
+        isValidateArrayItem: "Phần tử không đúng định dạng",
       },
     },
   },
