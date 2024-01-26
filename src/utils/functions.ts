@@ -72,3 +72,36 @@ export const getDateWeeks = () => {
     ...getWeeks(nowDate),
   };
 };
+
+export const fucCondition = (d: number) => `0${d}`.slice(-2);
+
+export const getDateStartEnd = (strD = "") => {
+  let date = new Date(),
+    y = date.getFullYear(),
+    m = date.getMonth();
+
+  if (strD) {
+    date = new Date(strD);
+    (y = date.getFullYear()), (m = date.getMonth());
+  }
+
+  const firstDay = new Date(y, m, 1);
+  const lastDay = new Date(y, m + 1, 0);
+  const startDate = firstDay.getDate();
+  const endDate = lastDay.getDate();
+  let d = startDate;
+  const listDateVN = [];
+  const listInternational = [];
+  while (d <= endDate) {
+    const dateFormat = `${fucCondition(d)}/${fucCondition(m + 1)}/${y}`;
+    const InterdateFormat = `${y}-${fucCondition(m + 1)}-${fucCondition(d)}`;
+    listDateVN.push(dateFormat);
+    listInternational.push(InterdateFormat);
+    d++;
+  }
+
+  return {
+    listDateVN,
+    listInternational,
+  };
+};
