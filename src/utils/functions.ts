@@ -40,3 +40,35 @@ export const awaitAll = <T, R>(
 
   return Promise.all(promises);
 };
+
+export const getWeeks = (date?: Date | string | number) => {
+  const now = new Date(date);
+  const day = now.getDay();
+  const dateNow = now.getDate();
+  const startDate = new Date(now.setDate(dateNow - day + (day == 0 ? -6 : 1)));
+  const endDate = new Date(now.setDate(dateNow - day + 7));
+  return {
+    startDate,
+    endDate,
+    objDate: {
+      start: startDate.getDate(),
+      end: endDate.getDate(),
+      months: [startDate.getMonth() + 1, endDate.getMonth() + 1],
+      years: [startDate.getFullYear(), endDate.getFullYear()]
+    }
+  };
+};
+
+export const getDateWeeks = () => {
+  const nowDate = new Date();
+  const month = nowDate.getMonth();
+  const year = nowDate.getFullYear();
+
+  return {
+    now: nowDate,
+    month: month + 1,
+    year,
+    date: nowDate.getDate(),
+    ...getWeeks(nowDate),
+  };
+};
