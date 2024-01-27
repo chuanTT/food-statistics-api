@@ -5,7 +5,6 @@ import foodController from "../controllers/food.controller";
 import { existsListFoodMiddleware } from "../middleware/listFood.middleware";
 import validateRequest from "../middleware/validateRequest";
 import {
-  configDefaultID,
   configFoodCreate,
   configFoodDelete,
 } from "../configs/configSchemaValidate";

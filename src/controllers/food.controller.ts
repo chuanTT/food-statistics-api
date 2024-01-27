@@ -40,10 +40,14 @@ class FoodController {
 
   delete = async (req: IRequest, res: Response) => {
     const { foodIds } = req.body;
+    const {
+      user: { id: userID },
+    } = req.keyStore;
     const newFoodIds = parseArr(foodIds);
 
     const resultDeleteFood = await foodServices.deleteFoods({
       foodIds: newFoodIds,
+      userID,
     });
 
     if (resultDeleteFood) {

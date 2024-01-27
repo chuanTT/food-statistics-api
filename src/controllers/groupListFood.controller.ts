@@ -3,7 +3,7 @@ import { BadRequest } from "http-errors";
 import { CREATED, OK } from "../core/success.response";
 import groupListFoodServices from "../services/groupListFood.services";
 import { IRequest } from "../types";
-import { getDateWeeks } from "../utils/functions";
+import { getDateStartEnd, getDateWeeks } from "../utils/functions";
 
 class GroupListFoodController {
   getAll = async (req: Request, res: Response) => {
@@ -149,6 +149,12 @@ class GroupListFoodController {
       },
     }).send(res);
   };
+
+  getChartMonth = async (req: IRequest, res: Response) => {
+    return new OK({
+      data: getDateStartEnd()
+    }).send(res)
+  }
 
   paid = async (req: Request, res: Response) => {
     const { id, isPaid } = req.body;

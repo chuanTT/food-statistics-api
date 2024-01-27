@@ -1,8 +1,8 @@
-import { UnprocessableEntity } from "http-errors";
-import { NextFunction, Request, Response } from "express";
+import { UnprocessableEntity, Forbidden } from "http-errors";
+import { NextFunction, Response } from "express";
 
 import { funcWhereFind } from "../helpers";
-import { TExistsCustomMiddleware } from "../types";
+import { IRequest, TExistsCustomMiddleware } from "../types";
 import { ListFood } from "../entity/ListFood";
 import listFoodServices from "../services/listFood.services";
 
@@ -14,7 +14,10 @@ export const existsListFoodMiddleware =
     isErrorExist = true,
     ...rest
   }: TExistsCustomMiddleware<ListFood>) =>
-  async (req: Request, _res: Response, next: NextFunction) => {
+  async (req: IRequest, _res: Response, next: NextFunction) => {
+    const {
+      user: { id: userId },
+    } = req.keyStore;
     const newObject = {
       ...Object.assign({}, req.body),
       ...req.params,
@@ -29,6 +32,11 @@ export const existsListFoodMiddleware =
     const result = await listFoodServices.findOneListFood({
       select,
       where: newWhere,
+      relations: {
+        groupListFood: {
+          user: true
+        }
+      },
       ...rest,
     });
 
@@ -36,6 +44,11 @@ export const existsListFoodMiddleware =
       isErrorExist ? next() : next(UnprocessableEntity(msgError));
       return;
     } else {
+      if (!(userId === result?.groupListFood?.user?.id)) {
+        next(Forbidden());
+        return;
+      }
+
       isErrorExist ? next(UnprocessableEntity(msgError)) : next();
       return;
     }

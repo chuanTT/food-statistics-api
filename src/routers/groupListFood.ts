@@ -23,6 +23,8 @@ router.get(
   asyncHandler(groupListFoodController.getStatistical)
 );
 
+router.get('/chart-month', asyncHandler(groupListFoodController.getChartMonth))
+
 router.get(
   "/:id",
   validateRequest({

@@ -13,6 +13,7 @@ type createFoodsProps = {
 
 type deleteFoodsProps = {
   foodIds: number[];
+  userID: number
 };
 
 type updateFoodsProps = {
@@ -55,12 +56,19 @@ class FoodServices {
     return newResultFoods;
   };
 
-  deleteFoods = async ({ foodIds }: deleteFoodsProps) => {
+  deleteFoods = async ({ foodIds, userID }: deleteFoodsProps) => {
     return await funcTransactionsQuery({
       callBack: async (queryRunner) => {
         const resultFoods = await queryRunner.manager.find(Food, {
           where: {
             id: In(foodIds),
+            listFood: {
+              groupListFood: {
+                user: {
+                  id: userID
+                }
+              }
+            }
           },
           relations: {
             listFood: true,
