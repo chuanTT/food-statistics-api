@@ -3,11 +3,13 @@ import * as _ from "lodash";
 import { configValidateType } from "../types";
 import {
   isDependent,
+  isMax,
   isMin,
   isMinLength,
   isNumber,
   isRequired,
   isValidDate,
+  isValidUserName,
   isValidateArrayItem,
   isValueArray,
 } from "../utils/validate";
@@ -70,9 +72,12 @@ export const configPasswordBody: configValidateType = {
 export const configUserNameBody: configValidateType = {
   body: {
     username: {
-      rules: [isRequired],
+      rules: [isRequired, isValidUserName, isMin(6), isMax(30)],
       msg: {
         isRequired: "Vui lòng nhập tên đăng nhập",
+        isValidUserName: "Tên đăng nhập không hợp lệ",
+        isMin: "Tên đăng nhập tối thiểu 6 ký tự",
+        isMax: "Tên đăng nhập tối đa 30 ký tự"
       },
     },
   },
